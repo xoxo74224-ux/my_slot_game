@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Slot Game ပညာပေး</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #111; color: white; text-align: center; font-family: sans-serif; }
+        .balance-box { background: #333; padding: 10px; border-bottom: 3px solid gold; font-size: 20px; }
+        #display { font-size: 60px; margin: 40px 0; background: #222; padding: 20px; border: 4px dashed gold; letter-spacing: 10px; }
+        .spin-btn { padding: 15px 40px; font-size: 22px; background: #ff4500; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 5px #999; }
+        .spin-btn:active { background-color: #ff4500; box-shadow: 0 2px #666; transform: translateY(4px); }
+        #msg { margin-top: 20px; color: #ff0000; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="balance-box">
+        👤 {{ user.name }} | 💰 လက်ကျန်ငွေ: <span id="balance">{{ user.balance }}</span> ကျပ်
+    </div>
+
+    <h1>🎰 ကံစမ်းကြည့်မလား 🎰</h1>
+    <div id="display">❓ | ❓ | ❓</div>
+
+    <button class="spin-btn" onclick="playSlot()">လှည့်မည် (၅၀၀ ကျပ်)</button>
+
+    <div id="msg"></div>
+    <p style="color: #666; margin-top: 50px;">*ဒါဟာ Simulation ဂိမ်းသာဖြစ်သည်*</p>
+
+    <script>
+        function playSlot() {
+            const msgDiv = document.getElementById('msg');
+            msgDiv.innerText = "လည်နေပြီ...";
+
+            fetch('/spin', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    msgDiv.innerText = "ပိုက်ဆံကုန်သွားပြီ၊ ဒိုင်ကတော့ ချမ်းသာသွားပြီ။";
+                } else {
+                    document.getElementById('display').innerText = data.result.join(' | ');
+                    document.getElementById('balance').innerText = data.balance;
+                    
+                    if (data.is_win) {
+                        msgDiv.style.color = "lime";
+                        msgDiv.innerText = "မင်းကံကောင်းလို့ ၁ ခါနိုင်တာပါ၊ ရေရှည်ဆော့ရင်တော့ ကုန်မှာပဲ!";
+                    } else {
+                        msgDiv.style.color = "red";
+                        msgDiv.innerText = "ဒိုင်စားသွားပြန်ပြီ! (ဒီတစ်ခါ ၅၀၀ ကုန်ပြီ)";
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

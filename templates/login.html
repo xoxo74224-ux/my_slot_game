@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ရွာစား Slot - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #1a1a1a; color: #ffd700; font-family: 'Pyidaungsu', sans-serif; text-align: center; padding-top: 50px; }
+        input { padding: 12px; margin: 10px; border-radius: 5px; border: 1px solid gold; width: 80%; max-width: 300px; }
+        button { padding: 12px 30px; background: gold; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .box { border: 2px solid gold; display: inline-block; padding: 30px; border-radius: 15px; background: #262626; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>🎰 ရွာစား Slot ဂိမ်း 🎰</h2>
+        <p>ပညာပေးကာလမို့ အလကားဆော့ရန် ၅,၀၀၀ ပေးထားသည်</p>
+        <form action="/login" method="post">
+            <input type="text" name="name" placeholder="သင့်နာမည် ရိုက်ပါ" required><br>
+            <input type="number" name="phone" placeholder="ဖုန်းနံပါတ် ရိုက်ပါ" required><br><br>
+            <button type="submit">ဂိမ်းထဲဝင်မည်</button>
+        </form>
+    </div>
+</body>
+</html>
