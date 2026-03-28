@@ -1,53 +1,160 @@
-<!DOCTYPE html>
-<html>
+[3/28/2026 5:40 PM] EL EL Studio: <!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Slot Game ပညာပေး</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Village Professional Slot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #111; color: white; text-align: center; font-family: sans-serif; }
-        .balance-box { background: #333; padding: 10px; border-bottom: 3px solid gold; font-size: 20px; }
-        #display { font-size: 60px; margin: 40px 0; background: #222; padding: 20px; border: 4px dashed gold; letter-spacing: 10px; }
-        .spin-btn { padding: 15px 40px; font-size: 22px; background: #ff4500; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 5px #999; }
-        .spin-btn:active { background-color: #ff4500; box-shadow: 0 2px #666; transform: translateY(4px); }
-        #msg { margin-top: 20px; color: #ff0000; font-weight: bold; }
+        :root {
+            --gold: #ffd700;
+            --dark-bg: #1a1a1a;
+            --slot-box: #333;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: white;
+            font-family: 'Goldman', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .balance-box {
+            background: linear-gradient(45deg, #b8860b, #ffd700);
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: black;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .slot-machine {
+            background: #444;
+            padding: 20px;
+            border-radius: 20px;
+            border: 5px solid var(--gold);
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .reel {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            transition: transform 0.1s;
+        }
+
+        .spinning {
+            animation: spin 0.1s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-10px); }
+            100% { transform: translateY(10px); }
+        }
+
+        .btn-spin {
+            margin-top: 30px;
+            padding: 15px 50px;
+            font-size: 20px;
+            background: linear-gradient(to bottom, #ffd700, #b8860b);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 5px 0 #8b6508;
+        }
+
+        .btn-spin:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #8b6508;
+        }
+
+        .result-message {
+            margin-top: 20px;
+            font-size: 24px;
+            height: 30px;
+            color: var(--gold);
+        }
     </style>
 </head>
 <body>
-    <div class="balance-box">
-        👤 {{ user.name }} | 💰 လက်ကျန်ငွေ: <span id="balance">{{ user.balance }}</span> ကျပ်
+
+    <div class="header">
+        <h1>VILLAGE KING SLOT</h1>
+        <p>Player: {{ username }}</p>
     </div>
 
-    <h1>🎰 ကံစမ်းကြည့်မလား 🎰</h1>
-    <div id="display">❓ | ❓ | ❓</div>
+    <div class="balance-box">
+        BALANCE: <span id="balance">{{ balance }}</span> MMK
+    </div>
 
-    <button class="spin-btn" onclick="playSlot()">လှည့်မည် (၅၀၀ ကျပ်)</button>
+    <div class="slot-machine">
+        <div id="reel1" class="reel">🍒</div>
+        <div id="reel2" class="reel">🍋</div>
+        <div id="reel3" class="reel">🔔</div>
+    </div>
 
-    <div id="msg"></div>
-    <p style="color: #666; margin-top: 50px;">*ဒါဟာ Simulation ဂိမ်းသာဖြစ်သည်*</p>
+    <div id="message" class="result-message"></div>
+
+    <button class="btn-spin" onclick="spin()">SPIN NOW</button>
 
     <script>
-        function playSlot() {
-            const msgDiv = document.getElementById('msg');
-            msgDiv.innerText = "လည်နေပြီ...";
+        function spin() {
+            const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
+            const message = document.getElementById('message');
+            const btn = document.querySelector('.btn-spin');
+
+            // Start Spinning Animation
+            reels.forEach(r => r.classList.add('spinning'));
+            message.innerText = "Spinning...";
+            btn.disabled = true;
 
             fetch('/spin', { method: 'POST' })
             .then(res => res.json())
             .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                    msgDiv.innerText = "ပိုက်ဆံကုန်သွားပြီ၊ ဒိုင်ကတော့ ချမ်းသာသွားပြီ။";
-                } else {
-                    document.getElementById('display').innerText = data.result.join(' | ');
-                    document.getElementById('balance').innerText = data.balance;
+                setTimeout(() => {
+                    reels.forEach(r => r.classList.remove('spinning'));
                     
-                    if (data.is_win) {
-                        msgDiv.style.color = "lime";
-                        msgDiv.innerText = "မင်းကံကောင်းလို့ ၁ ခါနိုင်တာပါ၊ ရေရှည်ဆော့ရင်တော့ ကုန်မှာပဲ!";
+                    // Update Reels
+                    reels[0].innerText = data.reels[0];
+                    reels[1].innerText = data.reels[1];
+                    reels[2].
+[3/28/2026 5:40 PM] EL EL Studio: innerText = data.reels[2];
+
+                    // Update Balance
+                    document.getElementById('balance').innerText = data.balance;
+
+                    // Show Message
+                    if (data.won) {
+                        message.innerText = "💰 YOU WON " + data.win_amount + " MMK! 💰";
+                        message.style.color = "#00ff00";
                     } else {
-                        msgDiv.style.color = "red";
-                        msgDiv.innerText = "ဒိုင်စားသွားပြန်ပြီ! (ဒီတစ်ခါ ၅၀၀ ကုန်ပြီ)";
+                        message.innerText = "Try Again!";
+                        message.style.color = "#ffd700";
                     }
-                }
+                    
+                    btn.disabled = false;
+                }, 1000); // 1 second spinning animation
             });
         }
     </script>
